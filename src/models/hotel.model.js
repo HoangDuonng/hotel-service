@@ -8,7 +8,7 @@ const hotelSchema = new mongoose.Schema({
     unique: true,
     required: true
   },
-  name: {
+  displayName: {
     type: String,
     required: true,
     trim: true
@@ -16,82 +16,65 @@ const hotelSchema = new mongoose.Schema({
   description: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
+    default: "Không có mô tả"
   },
-  thumbnail: {
+  region: {
     type: String,
     required: true,
-    default: 'default-hotel-thumbnail.jpg'
+    trim: true
   },
-  detail_images: [{
+  starRating: {
+    type: String,
+    required: true,
+    default: "3.0"
+  },
+  userRating: {
+    type: String,
+    required: true,
+    default: "0"
+  },
+  numReviews: {
+    type: String,
+    required: true,
+    default: "0"
+  },
+  userRatingInfo: {
+    type: String,
+    required: true,
+    default: "Chưa có đánh giá"
+  },
+  latitude: {
+    type: String,
+    required: true
+  },
+  longitude: {
+    type: String,
+    required: true
+  },
+  price: {
+    type: String,
+    required: true,
+    default: "0"
+  },
+  imageUrl: {
+    type: String,
+    required: true,
+    default: "default.webp"
+  },
+  imageUrls: [{
     type: String,
     required: true
   }],
-  address: {
-    street: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    city: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    state: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    country: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    postal_code: {
-      type: String,
-      required: true,
-      trim: true
-    }
-  },
-  location: {
-    type: {
-      type: String,
-      enum: ['Point'],
-      default: 'Point'
-    },
-    coordinates: {
-      type: [Number], 
-      required: true,
-      index: '2dsphere'
-    }
-  },
-  contact: {
-    phone: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    email: {
-      type: String,
-      required: true,
-      trim: true,
-      lowercase: true
-    },
-    website: {
-      type: String,
-      trim: true
-    }
-  },
-  amenities: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Amenity'
+  hotelFeatures: [{
+    type: String,
+    required: true
   }],
-  star_rating: {
-    type: Number,
-    min: 1,
-    max: 5,
-    default: 3
+  slug: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true
   },
   is_active: {
     type: Boolean,
@@ -102,18 +85,20 @@ const hotelSchema = new mongoose.Schema({
 });
 
 // Indexes
-hotelSchema.index({ name: 1 });
-hotelSchema.index({ 'address.city': 1 });
-hotelSchema.index({ 'address.country': 1 });
-hotelSchema.index({ star_rating: 1 });
+hotelSchema.index({ displayName: 1 });
+hotelSchema.index({ description: 1 });
+hotelSchema.index({ region: 1 });
+hotelSchema.index({ starRating: 1 });
+hotelSchema.index({ userRating: 1 });
+hotelSchema.index({ price: 1 });
 hotelSchema.index({ is_active: 1 });
 
 // Compound index for search optimization
 hotelSchema.index({
-  name: 'text',
+  displayName: 'text',
   description: 'text',
-  'address.city': 'text',
-  'address.country': 'text'
+  region: 'text',
+  hotelFeatures: 'text'
 });
 
 const Hotel = mongoose.model('Hotel', hotelSchema);
